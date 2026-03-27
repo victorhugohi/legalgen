@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth:*)",
+      "Bash(where gh:*)",
+      "Bash(git --version)",
+      "Bash(npm --version)",
+      "Bash(winget install:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/GitHub CLI\")",
+      "Bash(gh repo:*)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm)",
+      "Bash(rm -rf node_modules package.json package-lock.json tsconfig.json next.config.ts src .next postcss.config.mjs eslint.config.mjs tailwind.config.ts next-env.d.ts AGENTS.md)",
+      "Bash(printf NonYesn)",
+      "Bash(yes)"
+    ]
+  }
+}
