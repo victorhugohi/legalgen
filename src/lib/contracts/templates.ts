@@ -64,6 +64,10 @@ function v(fields: FieldValues, key: string, fallback: string = "_______________
   return fields[key]?.trim() || fallback;
 }
 
+function partyBlock(f: FieldValues, prefix: string, role: string): string {
+  return `el/la Sr(a). ${v(f, `${prefix}_nombre`)}, mayor de edad, de nacionalidad ${v(f, `${prefix}_nacionalidad`)}, de estado civil ${v(f, `${prefix}_estado_civil`)}, de profesión ${v(f, `${prefix}_profesion`)}, hábil por derecho, con Cédula de Identidad No. ${v(f, `${prefix}_ci`)}, con domicilio en ${v(f, `${prefix}_domicilio`)}, quien en adelante se denominará "${role}"`;
+}
+
 function addEndDate(startDate: string, months: number): string {
   if (!startDate) return "_______________";
   const date = new Date(startDate + "T00:00:00");
@@ -114,9 +118,9 @@ Conste por el presente documento privado, que podrá ser elevado a instrumento p
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "arrendador_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "arrendador_ci")}, con domicilio en ${v(f, "arrendador_domicilio")}, quien en adelante se denominará "EL/LA ARRENDADOR(A)".
+Por una parte, ${partyBlock(f, "arrendador", "EL/LA ARRENDADOR(A)")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "arrendatario_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "arrendatario_ci")}, con domicilio en ${v(f, "arrendatario_domicilio")}, quien en adelante se denominará "EL/LA ARRENDATARIO(A)".
+Por otra parte, ${partyBlock(f, "arrendatario", "EL/LA ARRENDATARIO(A)")}.
 
 CLÁUSULA SEGUNDA.- (DEL OBJETO)
 
@@ -199,9 +203,9 @@ Conste por el presente documento privado, que podrá ser elevado a instrumento p
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "propietario_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "propietario_ci")}, con domicilio en ${v(f, "propietario_domicilio")}, quien en adelante se denominará "EL/LA PROPIETARIO(A)".
+Por una parte, ${partyBlock(f, "propietario", "EL/LA PROPIETARIO(A)")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "anticresista_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "anticresista_ci")}, con domicilio en ${v(f, "anticresista_domicilio")}, quien en adelante se denominará "EL/LA ANTICRESISTA".
+Por otra parte, ${partyBlock(f, "anticresista", "EL/LA ANTICRESISTA")}.
 
 CLÁUSULA SEGUNDA.- (ANTECEDENTES)
 
@@ -284,9 +288,9 @@ En el registro de escrituras públicas a su cargo, sírvase insertar la presente
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "vendedor_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "vendedor_ci")}, con domicilio en ${v(f, "vendedor_domicilio")}, quien en adelante se denominará "EL/LA VENDEDOR(A)".
+Por una parte, ${partyBlock(f, "vendedor", "EL/LA VENDEDOR(A)")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "comprador_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "comprador_ci")}, con domicilio en ${v(f, "comprador_domicilio")}, quien en adelante se denominará "EL/LA COMPRADOR(A)".
+Por otra parte, ${partyBlock(f, "comprador", "EL/LA COMPRADOR(A)")}.
 
 CLÁUSULA SEGUNDA.- (ANTECEDENTES DE DOMINIO)
 
@@ -348,9 +352,9 @@ Conste por el presente documento privado, que podrá ser elevado a instrumento p
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "vendedor_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "vendedor_ci")}, con domicilio en ${v(f, "vendedor_domicilio")}, quien en adelante se denominará "EL/LA VENDEDOR(A)".
+Por una parte, ${partyBlock(f, "vendedor", "EL/LA VENDEDOR(A)")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "comprador_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "comprador_ci")}, con domicilio en ${v(f, "comprador_domicilio")}, quien en adelante se denominará "EL/LA COMPRADOR(A)".
+Por otra parte, ${partyBlock(f, "comprador", "EL/LA COMPRADOR(A)")}.
 
 CLÁUSULA SEGUNDA.- (DEL OBJETO)
 
@@ -421,9 +425,9 @@ Conste por el presente documento privado, que podrá ser elevado a instrumento p
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "prestamista_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "prestamista_ci")}, con domicilio en ${v(f, "prestamista_domicilio")}, quien en adelante se denominará "EL/LA PRESTAMISTA" o "ACREEDOR(A)".
+Por una parte, ${partyBlock(f, "prestamista", "EL/LA PRESTAMISTA\" o \"ACREEDOR(A)")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "prestatario_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "prestatario_ci")}, con domicilio en ${v(f, "prestatario_domicilio")}, quien en adelante se denominará "EL/LA PRESTATARIO(A)" o "DEUDOR(A)".
+Por otra parte, ${partyBlock(f, "prestatario", "EL/LA PRESTATARIO(A)\" o \"DEUDOR(A)")}.
 
 CLÁUSULA SEGUNDA.- (DEL OBJETO)
 
@@ -498,7 +502,7 @@ CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
 EMPLEADOR: ${v(f, "empleador_empresa")}, con NIT No. ${v(f, "empleador_nit")}, representada legalmente por el/la Sr(a). ${v(f, "empleador_representante")}, con Cédula de Identidad No. ${v(f, "empleador_ci")}, con domicilio en ${v(f, "empleador_direccion")}, de la ciudad de ${v(f, "ciudad")}, quien en adelante se denominará "EL EMPLEADOR".
 
-TRABAJADOR(A): ${v(f, "trabajador_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "trabajador_ci")}, con domicilio en ${v(f, "trabajador_domicilio")}, quien en adelante se denominará "EL/LA TRABAJADOR(A)".
+TRABAJADOR(A): ${v(f, "trabajador_nombre")}, mayor de edad, de nacionalidad ${v(f, "trabajador_nacionalidad")}, de estado civil ${v(f, "trabajador_estado_civil")}, de profesión ${v(f, "trabajador_profesion")}, hábil por derecho, con Cédula de Identidad No. ${v(f, "trabajador_ci")}, con domicilio en ${v(f, "trabajador_domicilio")}, quien en adelante se denominará "EL/LA TRABAJADOR(A)".
 
 CLÁUSULA SEGUNDA.- (DEL OBJETO)
 
@@ -594,9 +598,9 @@ Conste por el presente documento privado, que podrá ser elevado a instrumento p
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "contratante_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "contratante_ci")}, con domicilio en ${v(f, "contratante_domicilio")}, quien en adelante se denominará "EL/LA CONTRATANTE".
+Por una parte, ${partyBlock(f, "contratante", "EL/LA CONTRATANTE")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "prestador_nombre")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "prestador_ci")}, con domicilio en ${v(f, "prestador_domicilio")}, quien en adelante se denominará "EL/LA PRESTADOR(A) DE SERVICIOS".
+Por otra parte, ${partyBlock(f, "prestador", "EL/LA PRESTADOR(A) DE SERVICIOS")}.
 
 CLÁUSULA SEGUNDA.- (DEL OBJETO)
 
@@ -665,9 +669,9 @@ Conste por el presente documento privado, el siguiente ACUERDO DE CONFIDENCIALID
 
 CLÁUSULA PRIMERA.- (DE LAS PARTES)
 
-Por una parte, el/la Sr(a). ${v(f, "parte_reveladora_nombre")}, con Cédula de Identidad No. ${v(f, "parte_reveladora_ci")}, con domicilio en ${v(f, "parte_reveladora_domicilio")}, quien en adelante se denominará "LA PARTE REVELADORA".
+Por una parte, ${partyBlock(f, "parte_reveladora", "LA PARTE REVELADORA")}.
 
-Por otra parte, el/la Sr(a). ${v(f, "parte_receptora_nombre")}, con Cédula de Identidad No. ${v(f, "parte_receptora_ci")}, con domicilio en ${v(f, "parte_receptora_domicilio")}, quien en adelante se denominará "LA PARTE RECEPTORA".
+Por otra parte, ${partyBlock(f, "parte_receptora", "LA PARTE RECEPTORA")}.
 
 CLÁUSULA SEGUNDA.- (DEL PROPÓSITO)
 
