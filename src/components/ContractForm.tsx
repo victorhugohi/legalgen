@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ContractType, ContractField } from "@/lib/contracts/types";
 import { generateContractText } from "@/lib/contracts/templates";
 import { generatePDF } from "@/lib/generators/pdf";
 import { generateDOCX } from "@/lib/generators/docx";
 import { saveAs } from "file-saver";
+import {
+  getUsageLimits,
+  canDownload,
+  recordDownload,
+  setUserEmail,
+  getUserEmail,
+  isAdmin,
+  activateAdmin,
+  UsageLimits,
+} from "@/lib/usage";
 
 interface Props {
   contract: ContractType;
@@ -16,6 +26,42 @@ export default function ContractForm({ contract }: Props) {
   const [preview, setPreview] = useState<string>("");
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailSaved, setEmailSaved] = useState(false);
+  const [limits, setLimits] = useState<UsageLimits | null>(null);
+  const [downloadError, setDownloadError] = useState("");
+  const [adminMode, setAdminMode] = useState(false);
+  const [adminInput, setAdminInput] = useState("");
+  const [showAdminInput, setShowAdminInput] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = getUserEmail();
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setEmailSaved(true);
+    }
+    setAdminMode(isAdmin());
+    setLimits(getUsageLimits());
+  }, []);
+
+  const handleSaveEmail = () => {
+    if (!email.includes("@")) return;
+    setUserEmail(email);
+    setEmailSaved(true);
+    setLimits(getUsageLimits());
+  };
+
+  const handleAdminActivate = () => {
+    if (activateAdmin(adminInput)) {
+      setAdminMode(true);
+      setShowAdminInput(false);
+      setAdminInput("");
+      setLimits(getUsageLimits());
+    } else {
+      setDownloadError("Código de administrador inválido");
+      setTimeout(() => setDownloadError(""), 3000);
+    }
+  };
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -25,31 +71,46 @@ export default function ContractForm({ contract }: Props) {
     const text = generateContractText(contract.id, formData);
     setPreview(text);
     setShowPreview(true);
+    setDownloadError("");
   };
 
-  const handleDownloadPDF = async (watermark: boolean = false) => {
-    setGenerating(true);
-    try {
-      const text = generateContractText(contract.id, formData);
-      const blob = generatePDF(contract.name, text, watermark);
-      saveAs(
-        blob,
-        `${contract.id}_${new Date().toISOString().split("T")[0]}.pdf`
-      );
-    } finally {
-      setGenerating(false);
+  const handleDownload = async (
+    format: "pdf" | "docx",
+    watermark: boolean
+  ) => {
+    if (!emailSaved) {
+      setDownloadError("Por favor ingresa tu email primero.");
+      return;
     }
-  };
 
-  const handleDownloadDOCX = async (watermark: boolean = false) => {
+    const type = watermark ? "watermark" : "basic";
+
+    if (!canDownload(type)) {
+      setDownloadError(
+        watermark
+          ? "Has alcanzado el límite de 3 contratos con marca de agua esta semana. Obtén un código de acceso para contratos ilimitados."
+          : "Has alcanzado el límite de 3 contratos básicos esta semana. Puedes descargar con marca de agua o obtener un código de acceso."
+      );
+      return;
+    }
+
     setGenerating(true);
+    setDownloadError("");
+
     try {
       const text = generateContractText(contract.id, formData);
-      const blob = await generateDOCX(contract.name, text, watermark);
-      saveAs(
-        blob,
-        `${contract.id}_${new Date().toISOString().split("T")[0]}.docx`
-      );
+      const filename = `${contract.id}_${new Date().toISOString().split("T")[0]}`;
+
+      if (format === "pdf") {
+        const blob = generatePDF(contract.name, text, watermark);
+        saveAs(blob, `${filename}.pdf`);
+      } else {
+        const blob = await generateDOCX(contract.name, text, watermark);
+        saveAs(blob, `${filename}.docx`);
+      }
+
+      recordDownload(type);
+      setLimits(getUsageLimits());
     } finally {
       setGenerating(false);
     }
@@ -125,7 +186,11 @@ export default function ContractForm({ contract }: Props) {
               value={value}
               onChange={(e) => handleChange(field.name, e.target.value)}
               required={field.required}
-              min={field.type === "currency" || field.type === "number" ? 0 : undefined}
+              min={
+                field.type === "currency" || field.type === "number"
+                  ? 0
+                  : undefined
+              }
               step={field.type === "currency" ? "0.01" : undefined}
             />
             {field.helperText && (
@@ -138,6 +203,111 @@ export default function ContractForm({ contract }: Props) {
 
   return (
     <div className="space-y-8">
+      {/* Email + Usage Bar */}
+      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+        {!emailSaved ? (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ingresa tu email para comenzar
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                className="input-field flex-1"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSaveEmail()}
+              />
+              <button
+                onClick={handleSaveEmail}
+                className="btn-primary whitespace-nowrap"
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-gray-600">
+                {email}
+              </span>
+              {adminMode && (
+                <span className="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full font-bold">
+                  ADMIN
+                </span>
+              )}
+              <button
+                onClick={() => { setEmailSaved(false); setEmail(""); }}
+                className="text-xs text-blue-600 hover:underline"
+              >
+                Cambiar
+              </button>
+            </div>
+            {limits && !adminMode && (
+              <div className="flex items-center gap-4 text-xs text-gray-600">
+                <span>
+                  Básicos:{" "}
+                  <strong className={limits.basicRemaining === 0 ? "text-red-600" : "text-green-600"}>
+                    {limits.basicRemaining}/3
+                  </strong>
+                </span>
+                <span>
+                  Con marca:{" "}
+                  <strong className={limits.watermarkRemaining === 0 ? "text-red-600" : "text-green-600"}>
+                    {limits.watermarkRemaining}/3
+                  </strong>
+                </span>
+                <span className="text-gray-400">esta semana</span>
+              </div>
+            )}
+            {adminMode && (
+              <span className="text-xs text-purple-600 font-medium">
+                Acceso ilimitado
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Admin code input */}
+        {emailSaved && !adminMode && (
+          <div className="mt-2 pt-2 border-t border-blue-200">
+            {!showAdminInput ? (
+              <button
+                onClick={() => setShowAdminInput(true)}
+                className="text-xs text-gray-500 hover:text-gray-700"
+              >
+                ¿Tienes un código de acceso?
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className="input-field flex-1 text-sm py-2"
+                  placeholder="Ingresa tu código de acceso"
+                  value={adminInput}
+                  onChange={(e) => setAdminInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAdminActivate()}
+                />
+                <button
+                  onClick={handleAdminActivate}
+                  className="btn-primary text-sm py-2 px-4"
+                >
+                  Activar
+                </button>
+                <button
+                  onClick={() => { setShowAdminInput(false); setAdminInput(""); }}
+                  className="text-sm text-gray-500 hover:text-gray-700 px-2"
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Form */}
       <form
         onSubmit={(e) => {
@@ -199,39 +369,68 @@ export default function ContractForm({ contract }: Props) {
               </div>
             </div>
 
+            {/* Error Message */}
+            {downloadError && (
+              <div className="mx-4 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                {downloadError}
+              </div>
+            )}
+
             {/* Download Actions */}
             <div className="p-4 border-t bg-gray-50 rounded-b-2xl">
               <p className="text-xs text-gray-500 mb-3 text-center">
-                Descarga tu contrato en el formato que prefieras
+                {adminMode
+                  ? "Modo administrador — descargas ilimitadas"
+                  : "Descarga tu contrato en el formato que prefieras"}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
-                  onClick={() => handleDownloadPDF(false)}
-                  disabled={generating}
+                  onClick={() => handleDownload("pdf", false)}
+                  disabled={generating || (!adminMode && !canDownload("basic"))}
                   className="btn-primary text-sm py-2 px-3 text-center disabled:opacity-50"
                 >
                   PDF
+                  {!adminMode && limits && (
+                    <span className="block text-[10px] opacity-75">
+                      ({limits.basicRemaining} restantes)
+                    </span>
+                  )}
                 </button>
                 <button
-                  onClick={() => handleDownloadPDF(true)}
-                  disabled={generating}
+                  onClick={() => handleDownload("pdf", true)}
+                  disabled={generating || (!adminMode && !canDownload("watermark"))}
                   className="btn-secondary text-sm py-2 px-3 text-center disabled:opacity-50"
                 >
                   PDF (muestra)
+                  {!adminMode && limits && (
+                    <span className="block text-[10px] opacity-75">
+                      ({limits.watermarkRemaining} restantes)
+                    </span>
+                  )}
                 </button>
                 <button
-                  onClick={() => handleDownloadDOCX(false)}
-                  disabled={generating}
+                  onClick={() => handleDownload("docx", false)}
+                  disabled={generating || (!adminMode && !canDownload("basic"))}
                   className="btn-primary text-sm py-2 px-3 text-center disabled:opacity-50"
                 >
                   Word
+                  {!adminMode && limits && (
+                    <span className="block text-[10px] opacity-75">
+                      ({limits.basicRemaining} restantes)
+                    </span>
+                  )}
                 </button>
                 <button
-                  onClick={() => handleDownloadDOCX(true)}
-                  disabled={generating}
+                  onClick={() => handleDownload("docx", true)}
+                  disabled={generating || (!adminMode && !canDownload("watermark"))}
                   className="btn-secondary text-sm py-2 px-3 text-center disabled:opacity-50"
                 >
                   Word (muestra)
+                  {!adminMode && limits && (
+                    <span className="block text-[10px] opacity-75">
+                      ({limits.watermarkRemaining} restantes)
+                    </span>
+                  )}
                 </button>
               </div>
             </div>

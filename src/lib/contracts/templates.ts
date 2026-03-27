@@ -101,6 +101,20 @@ export function generateContractText(contractId: string, fields: FieldValues): s
       return generateServicios(fields);
     case "confidencialidad":
       return generateConfidencialidad(fields);
+    case "comodato":
+      return generateComodato(fields);
+    case "permuta":
+      return generatePermuta(fields);
+    case "donacion":
+      return generateDonacion(fields);
+    case "fianza":
+      return generateFianza(fields);
+    case "sociedad":
+      return generateSociedad(fields);
+    case "obra":
+      return generateObra(fields);
+    case "poder":
+      return generatePoder(fields);
     default:
       return "Tipo de contrato no encontrado.";
   }
@@ -723,4 +737,620 @@ _______________________________          _______________________________
 LA PARTE REVELADORA                      LA PARTE RECEPTORA
 ${v(f, "parte_reveladora_nombre")}        ${v(f, "parte_receptora_nombre")}
 C.I. ${v(f, "parte_reveladora_ci")}       C.I. ${v(f, "parte_receptora_ci")}`;
+}
+
+function generateComodato(f: FieldValues): string {
+  return `CONTRATO DE COMODATO (PRÉSTAMO DE USO GRATUITO)
+
+Conste por el presente documento privado, que podrá ser elevado a instrumento público a solo reconocimiento de firmas y rúbricas, el siguiente CONTRATO DE COMODATO, suscrito al tenor de las siguientes cláusulas:
+
+CLÁUSULA PRIMERA.- (DE LAS PARTES)
+
+Por una parte, ${partyBlock(f, "comodante", "EL/LA COMODANTE")}.
+
+Por otra parte, ${partyBlock(f, "comodatario", "EL/LA COMODATARIO(A)")}.
+
+CLÁUSULA SEGUNDA.- (DEL OBJETO)
+
+Por el presente contrato, EL/LA COMODANTE entrega a EL/LA COMODATARIO(A), en calidad de préstamo de uso gratuito, el siguiente bien:
+
+${v(f, "descripcion_bien")}
+
+Tipo de bien: ${v(f, "tipo_bien")}
+
+EL/LA COMODATARIO(A) declara recibir el bien en el siguiente estado: ${v(f, "estado_bien")}
+
+CLÁUSULA TERCERA.- (DE LA GRATUIDAD)
+
+Queda expresamente establecido que el presente préstamo es GRATUITO, no existiendo contraprestación económica alguna a cargo de EL/LA COMODATARIO(A). En caso de establecerse cualquier tipo de pago, el presente contrato se considerará como arrendamiento y se regirá por las normas aplicables.
+
+CLÁUSULA CUARTA.- (DEL USO AUTORIZADO)
+
+EL/LA COMODATARIO(A) se compromete a utilizar el bien exclusivamente para: ${v(f, "uso_autorizado")}.
+
+Queda prohibido destinar el bien a un uso distinto al autorizado, so pena de resolución inmediata del contrato y responsabilidad por daños y perjuicios.
+
+CLÁUSULA QUINTA.- (DEL PLAZO)
+
+El presente contrato tendrá vigencia desde el ${formatDate(f.fecha_inicio)} hasta el ${formatDate(f.fecha_devolucion)}, fecha en que EL/LA COMODATARIO(A) deberá devolver el bien en las mismas condiciones en que lo recibió, salvo el deterioro normal por el uso.
+
+CLÁUSULA SEXTA.- (DE LAS OBLIGACIONES DEL COMODATARIO)
+
+EL/LA COMODATARIO(A) se obliga a:
+a) Conservar y cuidar el bien con la diligencia de un buen padre de familia.
+b) Utilizar el bien únicamente para el uso autorizado.
+c) Asumir los gastos ordinarios de conservación y mantenimiento.
+d) No prestar ni ceder el uso del bien a terceros sin autorización escrita del COMODANTE.
+e) Devolver el bien en el plazo acordado y en el mismo estado, salvo el deterioro natural.
+f) Comunicar inmediatamente al COMODANTE cualquier daño o deterioro del bien.
+
+CLÁUSULA SÉPTIMA.- (DE LA RESPONSABILIDAD)
+
+EL/LA COMODATARIO(A) será responsable de la pérdida o deterioro del bien cuando:
+a) Lo destine a un uso distinto al convenido.
+b) Lo conserve por más tiempo del acordado.
+c) No lo cuide con la diligencia debida.
+d) Pudiendo salvar el bien prestado, prefiera salvar el propio.
+
+Conforme al Art. 864 del Código Civil, el comodatario responde incluso del caso fortuito cuando ha destinado el bien a un uso no autorizado.
+
+CLÁUSULA OCTAVA.- (DE LA DEVOLUCIÓN ANTICIPADA)
+
+EL/LA COMODANTE podrá exigir la devolución anticipada del bien en caso de necesidad urgente e imprevista, o cuando EL/LA COMODATARIO(A) incumpla cualquiera de sus obligaciones.
+
+CLÁUSULA NOVENA.- (DE LA JURISDICCIÓN)
+
+Las partes se someten a la jurisdicción de los juzgados ordinarios de la ciudad de ${v(f, "ciudad")}.
+${f.clausulas_adicionales ? `\nCLÁUSULA DÉCIMA.- (CLÁUSULAS ADICIONALES)\n\n${f.clausulas_adicionales}` : ""}
+
+En señal de conformidad, ambas partes firman el presente contrato en dos ejemplares de un mismo tenor y efecto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_inicio)}.
+
+
+
+_______________________________          _______________________________
+EL/LA COMODANTE                          EL/LA COMODATARIO(A)
+${v(f, "comodante_nombre")}               ${v(f, "comodatario_nombre")}
+C.I. ${v(f, "comodante_ci")}              C.I. ${v(f, "comodatario_ci")}`;
+}
+
+function generatePermuta(f: FieldValues): string {
+  const valorA = parseFloat(f.valor_a || "0");
+  const valorB = parseFloat(f.valor_b || "0");
+  const compensacion = parseFloat(f.compensacion || "0");
+
+  return `CONTRATO DE PERMUTA
+
+Conste por el presente documento privado, que podrá ser elevado a instrumento público a solo reconocimiento de firmas y rúbricas, el siguiente CONTRATO DE PERMUTA, suscrito al tenor de las siguientes cláusulas:
+
+CLÁUSULA PRIMERA.- (DE LAS PARTES)
+
+Por una parte, ${partyBlock(f, "permutante_a", "EL/LA PRIMER(A) PERMUTANTE")}.
+
+Por otra parte, ${partyBlock(f, "permutante_b", "EL/LA SEGUNDO(A) PERMUTANTE")}.
+
+CLÁUSULA SEGUNDA.- (DEL OBJETO)
+
+Por el presente contrato, las partes acuerdan realizar la permuta recíproca de los siguientes bienes:
+
+BIEN A (entregado por EL/LA PRIMER(A) PERMUTANTE):
+${v(f, "bien_a")}
+Valor estimado: ${formatCurrency(String(valorA), "$us.")} (${numberToWords(valorA)} dólares americanos)
+
+BIEN B (entregado por EL/LA SEGUNDO(A) PERMUTANTE):
+${v(f, "bien_b")}
+Valor estimado: ${formatCurrency(String(valorB), "$us.")} (${numberToWords(valorB)} dólares americanos)
+
+CLÁUSULA TERCERA.- (DE LA COMPENSACIÓN)
+
+${compensacion > 0
+    ? `Existiendo una diferencia de valor entre los bienes permutados, ${valorA > valorB ? "EL/LA SEGUNDO(A) PERMUTANTE" : "EL/LA PRIMER(A) PERMUTANTE"} pagará a ${valorA > valorB ? "EL/LA PRIMER(A) PERMUTANTE" : "EL/LA SEGUNDO(A) PERMUTANTE"} la suma de ${formatCurrency(String(compensacion), "$us.")} (${numberToWords(compensacion)} dólares americanos) como compensación por la diferencia de valor.`
+    : "Las partes declaran que los bienes permutados tienen un valor equivalente, por lo que no existe compensación monetaria adicional."
+}
+
+CLÁUSULA CUARTA.- (DE LA PROPIEDAD)
+
+Cada parte declara ser legítimo(a) propietario(a) del bien que entrega en permuta, el cual se encuentra libre de todo gravamen, embargo, litis pendiente y cualquier otra carga que pudiera impedir la libre disposición del mismo.
+
+CLÁUSULA QUINTA.- (DE LA ENTREGA)
+
+La entrega recíproca de los bienes se realizará a la fecha de suscripción del presente contrato, es decir el ${formatDate(f.fecha_permuta)}, salvo acuerdo diferente entre las partes.
+
+CLÁUSULA SEXTA.- (DE LA EVICCIÓN Y SANEAMIENTO)
+
+Cada parte se obliga a la evicción y saneamiento respecto del bien que entrega, conforme a los Arts. 624-638 del Código Civil Boliviano, en concordancia con el Art. 654 que hace aplicables a la permuta las reglas de la compraventa.
+
+CLÁUSULA SÉPTIMA.- (DE LOS GASTOS E IMPUESTOS)
+
+Los gastos notariales, de registro y los impuestos de transferencia que se generen serán cubiertos por ambas partes en partes iguales, salvo acuerdo diferente.
+
+CLÁUSULA OCTAVA.- (DE LA JURISDICCIÓN)
+
+Las partes se someten a la jurisdicción de los juzgados ordinarios de la ciudad de ${v(f, "ciudad")}.
+${f.clausulas_adicionales ? `\nCLÁUSULA NOVENA.- (CLÁUSULAS ADICIONALES)\n\n${f.clausulas_adicionales}` : ""}
+
+En señal de conformidad, ambas partes firman el presente contrato en dos ejemplares de un mismo tenor y efecto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_permuta)}.
+
+
+
+_______________________________          _______________________________
+PRIMER(A) PERMUTANTE                     SEGUNDO(A) PERMUTANTE
+${v(f, "permutante_a_nombre")}            ${v(f, "permutante_b_nombre")}
+C.I. ${v(f, "permutante_a_ci")}           C.I. ${v(f, "permutante_b_ci")}`;
+}
+
+function generateDonacion(f: FieldValues): string {
+  const valor = parseFloat(f.valor_bien || "0");
+
+  return `CONTRATO DE DONACIÓN
+
+Conste por el presente documento privado, que podrá ser elevado a instrumento público a solo reconocimiento de firmas y rúbricas, el siguiente CONTRATO DE DONACIÓN, suscrito al tenor de las siguientes cláusulas:
+
+${f.tipo_bien === "inmueble" ? "NOTA IMPORTANTE: La donación de bienes inmuebles DEBE realizarse mediante escritura pública ante Notario de Fe Pública e inscribirse en Derechos Reales para su validez legal (Art. 667 del Código Civil).\n" : ""}
+CLÁUSULA PRIMERA.- (DE LAS PARTES)
+
+Por una parte, ${partyBlock(f, "donante", "EL/LA DONANTE")}.
+
+Por otra parte, ${partyBlock(f, "donatario", "EL/LA DONATARIO(A)")}.
+
+CLÁUSULA SEGUNDA.- (DEL OBJETO)
+
+Por el presente contrato, EL/LA DONANTE, de libre y espontánea voluntad, transfiere a título GRATUITO a favor de EL/LA DONATARIO(A), el siguiente bien:
+
+${v(f, "descripcion_bien")}
+Tipo de bien: ${v(f, "tipo_bien")}
+Valor estimado: ${formatCurrency(String(valor), "$us.")} (${numberToWords(valor)} dólares americanos)
+
+CLÁUSULA TERCERA.- (DE LA ACEPTACIÓN)
+
+EL/LA DONATARIO(A) declara expresamente que ACEPTA la presente donación en los términos y condiciones establecidos en este contrato, manifestando su agradecimiento al DONANTE.
+
+CLÁUSULA CUARTA.- (DE LA PROPIEDAD Y LIBRE DISPOSICIÓN)
+
+EL/LA DONANTE declara ser legítimo(a) propietario(a) del bien donado, el cual se encuentra libre de todo gravamen, embargo, litis pendiente y cualquier otra carga. Asimismo declara que la presente donación no afecta la legítima que por ley corresponde a sus herederos forzosos, conforme al Art. 1059 del Código Civil.
+
+CLÁUSULA QUINTA.- (DE LA ENTREGA)
+
+La entrega del bien donado se realizará en la fecha de suscripción del presente contrato, es decir el ${formatDate(f.fecha_donacion)}.
+${f.reserva_usufructo === "si" ? `\nSin embargo, EL/LA DONANTE se reserva el derecho de usufructo vitalicio sobre el bien donado, pudiendo continuar con su uso y goce durante toda su vida. EL/LA DONATARIO(A) adquiere la nuda propiedad.` : ""}
+
+CLÁUSULA SEXTA.- (DE LAS CONDICIONES)
+
+${f.condiciones ? `La presente donación se realiza con las siguientes condiciones (cargos):\n\n${f.condiciones}\n\nEl incumplimiento de las condiciones señaladas faculta a EL/LA DONANTE a solicitar la revocación de la donación conforme al Art. 679 del Código Civil.` : "La presente donación se realiza de forma pura y simple, sin condición ni cargo alguno."}
+
+CLÁUSULA SÉPTIMA.- (DE LA IRREVOCABILIDAD)
+
+La presente donación es irrevocable, salvo las causales previstas por ley:
+a) Ingratitud del donatario (Art. 673 CC).
+b) Superveniencia de necesidad del donante (Art. 676 CC).
+c) Incumplimiento de los cargos impuestos (Art. 679 CC).
+
+CLÁUSULA OCTAVA.- (DE LOS GASTOS)
+
+Los gastos notariales, de registro e impuestos que se generen por la presente donación serán cubiertos por EL/LA DONATARIO(A).
+
+CLÁUSULA NOVENA.- (DE LA JURISDICCIÓN)
+
+Las partes se someten a la jurisdicción de los juzgados ordinarios de la ciudad de ${v(f, "ciudad")}.
+${f.clausulas_adicionales ? `\nCLÁUSULA DÉCIMA.- (CLÁUSULAS ADICIONALES)\n\n${f.clausulas_adicionales}` : ""}
+
+En señal de conformidad, ambas partes firman el presente contrato en dos ejemplares de un mismo tenor y efecto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_donacion)}.
+
+
+
+_______________________________          _______________________________
+EL/LA DONANTE                            EL/LA DONATARIO(A)
+${v(f, "donante_nombre")}                 ${v(f, "donatario_nombre")}
+C.I. ${v(f, "donante_ci")}                C.I. ${v(f, "donatario_ci")}`;
+}
+
+function generateFianza(f: FieldValues): string {
+  const monto = parseFloat(f.monto_garantizado || "0");
+
+  return `CONTRATO DE FIANZA
+
+Conste por el presente documento privado, que podrá ser elevado a instrumento público a solo reconocimiento de firmas y rúbricas, el siguiente CONTRATO DE FIANZA, suscrito al tenor de las siguientes cláusulas:
+
+CLÁUSULA PRIMERA.- (DE LAS PARTES)
+
+${partyBlock(f, "acreedor", "EL/LA ACREEDOR(A)")}.
+
+${partyBlock(f, "deudor", "EL/LA DEUDOR(A) PRINCIPAL")}.
+
+${partyBlock(f, "fiador", "EL/LA FIADOR(A)")}.
+
+CLÁUSULA SEGUNDA.- (DE LA OBLIGACIÓN PRINCIPAL)
+
+EL/LA DEUDOR(A) PRINCIPAL tiene a su cargo la siguiente obligación frente a EL/LA ACREEDOR(A):
+
+${v(f, "obligacion_principal")}
+
+CLÁUSULA TERCERA.- (DEL OBJETO)
+
+Por el presente contrato, EL/LA FIADOR(A) se constituye en garante de la obligación descrita en la cláusula segunda, comprometiéndose a cumplirla en caso de que EL/LA DEUDOR(A) PRINCIPAL no lo haga.
+
+El monto garantizado asciende a ${formatCurrency(String(monto))} (${numberToWords(monto)} bolivianos), que no excede el monto de la obligación principal, conforme al Art. 920 del Código Civil.
+
+CLÁUSULA CUARTA.- (DEL TIPO DE FIANZA)
+
+${f.tipo_fianza === "solidaria"
+    ? "La presente fianza es de carácter SOLIDARIO. EL/LA FIADOR(A) renuncia expresamente al beneficio de excusión previsto en el Art. 930 del Código Civil, por lo que EL/LA ACREEDOR(A) podrá dirigirse directamente contra EL/LA FIADOR(A) sin necesidad de agotar primero los recursos contra EL/LA DEUDOR(A) PRINCIPAL."
+    : "La presente fianza es de carácter SIMPLE. EL/LA FIADOR(A) goza del beneficio de excusión conforme al Art. 930 del Código Civil, por lo que EL/LA ACREEDOR(A) deberá dirigirse primero contra el patrimonio de EL/LA DEUDOR(A) PRINCIPAL antes de requerir el pago a EL/LA FIADOR(A)."
+}
+
+CLÁUSULA QUINTA.- (DEL PLAZO)
+
+${f.duracion === "obligacion"
+    ? "La presente fianza tendrá vigencia hasta el cumplimiento total de la obligación principal garantizada."
+    : `La presente fianza tendrá una vigencia de ${f.duracion} año(s) a partir de la fecha de suscripción del presente contrato.`
+}
+
+CLÁUSULA SEXTA.- (DEL DERECHO DE SUBROGACIÓN)
+
+En caso de que EL/LA FIADOR(A) pague la obligación garantizada, se subrogará en los derechos de EL/LA ACREEDOR(A) contra EL/LA DEUDOR(A) PRINCIPAL, pudiendo reclamar el reembolso total de lo pagado, más los intereses, gastos y daños que hubiere sufrido, conforme a los Arts. 938-940 del Código Civil.
+
+CLÁUSULA SÉPTIMA.- (DE LAS OBLIGACIONES DEL FIADOR)
+
+EL/LA FIADOR(A) declara:
+a) Ser mayor de edad, hábil por derecho y con capacidad económica suficiente para responder por la obligación garantizada.
+b) Tener domicilio en la jurisdicción del presente contrato.
+c) Que su patrimonio es suficiente para cubrir el monto garantizado.
+d) Que se obliga a comunicar cualquier cambio de domicilio a las demás partes.
+
+CLÁUSULA OCTAVA.- (DE LA EXTINCIÓN)
+
+La presente fianza se extinguirá por:
+a) Pago total de la obligación principal por parte del DEUDOR.
+b) Extinción de la obligación principal por cualquier causa legal.
+c) Vencimiento del plazo de la fianza.
+d) Liberación expresa por parte del ACREEDOR.
+e) Cualquier otra causa prevista por ley (Arts. 941-949 CC).
+
+CLÁUSULA NOVENA.- (DE LA JURISDICCIÓN)
+
+Las partes se someten a la jurisdicción de los juzgados ordinarios de la ciudad de ${v(f, "ciudad")}.
+${f.clausulas_adicionales ? `\nCLÁUSULA DÉCIMA.- (CLÁUSULAS ADICIONALES)\n\n${f.clausulas_adicionales}` : ""}
+
+En señal de conformidad, las tres partes firman el presente contrato en tres ejemplares de un mismo tenor y efecto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_fianza)}.
+
+
+
+_______________________________
+EL/LA ACREEDOR(A)
+${v(f, "acreedor_nombre")}
+C.I. ${v(f, "acreedor_ci")}
+
+_______________________________
+EL/LA DEUDOR(A) PRINCIPAL
+${v(f, "deudor_nombre")}
+C.I. ${v(f, "deudor_ci")}
+
+_______________________________
+EL/LA FIADOR(A)
+${v(f, "fiador_nombre")}
+C.I. ${v(f, "fiador_ci")}`;
+}
+
+function generateSociedad(f: FieldValues): string {
+  const capital = parseFloat(f.capital_social || "0");
+  const aporte1 = parseFloat(f.aporte_socio_1 || "0");
+  const aporte2 = parseFloat(f.aporte_socio_2 || "0");
+  const pct1 = capital > 0 ? ((aporte1 / capital) * 100).toFixed(1) : "0";
+  const pct2 = capital > 0 ? ((aporte2 / capital) * 100).toFixed(1) : "0";
+  const cuotas = capital > 0 ? Math.floor(capital / 100) : 0;
+  const cuotas1 = capital > 0 ? Math.floor(aporte1 / 100) : 0;
+  const cuotas2 = capital > 0 ? Math.floor(aporte2 / 100) : 0;
+
+  return `MINUTA DE CONSTITUCIÓN DE SOCIEDAD DE RESPONSABILIDAD LIMITADA
+
+Señor Notario de Fe Pública:
+
+En el registro de escrituras públicas a su cargo, sírvase insertar la presente MINUTA DE CONSTITUCIÓN DE SOCIEDAD DE RESPONSABILIDAD LIMITADA, con las siguientes cláusulas y condiciones:
+
+NOTA: Este documento DEBE ser protocolizado mediante escritura pública ante Notario de Fe Pública y registrado en FUNDEMPRESA (Registro de Comercio) para su validez legal.
+
+CLÁUSULA PRIMERA.- (DE LAS PARTES / SOCIOS FUNDADORES)
+
+Intervienen como socios fundadores:
+
+PRIMER SOCIO: ${v(f, "socio_1_nombre")}, de nacionalidad ${v(f, "socio_1_nacionalidad")}, de estado civil ${v(f, "socio_1_estado_civil")}, de profesión ${v(f, "socio_1_profesion")}, con Cédula de Identidad No. ${v(f, "socio_1_ci")}, con domicilio en ${v(f, "socio_1_domicilio")}.
+
+SEGUNDO SOCIO: ${v(f, "socio_2_nombre")}, de nacionalidad ${v(f, "socio_2_nacionalidad")}, de estado civil ${v(f, "socio_2_estado_civil")}, de profesión ${v(f, "socio_2_profesion")}, con Cédula de Identidad No. ${v(f, "socio_2_ci")}, con domicilio en ${v(f, "socio_2_domicilio")}.
+
+CLÁUSULA SEGUNDA.- (DE LA CONSTITUCIÓN)
+
+Los socios fundadores, de libre y espontánea voluntad, acuerdan constituir una SOCIEDAD DE RESPONSABILIDAD LIMITADA, la cual se regirá por el Código de Comercio (D.L. 14379), las disposiciones del presente contrato y las leyes aplicables del Estado Plurinacional de Bolivia.
+
+CLÁUSULA TERCERA.- (DE LA DENOMINACIÓN)
+
+La sociedad girará bajo la denominación o razón social: "${v(f, "razon_social")}".
+
+CLÁUSULA CUARTA.- (DEL OBJETO SOCIAL)
+
+La sociedad tendrá por objeto las siguientes actividades:
+
+${v(f, "objeto_social")}
+
+La sociedad podrá realizar todas las actividades lícitas conexas y complementarias al objeto social descrito.
+
+CLÁUSULA QUINTA.- (DEL DOMICILIO)
+
+El domicilio legal de la sociedad se fija en ${v(f, "domicilio_legal")}, de la ciudad de ${v(f, "ciudad")}, Estado Plurinacional de Bolivia. La sociedad podrá establecer sucursales, agencias u oficinas en cualquier lugar del territorio nacional o en el exterior, por decisión de la junta de socios.
+
+CLÁUSULA SEXTA.- (DEL CAPITAL SOCIAL)
+
+El capital social es de ${formatCurrency(String(capital))} (${numberToWords(capital)} bolivianos), dividido en ${cuotas} cuotas de capital de Bs. 100.- (cien bolivianos) cada una, totalmente suscrito y pagado de la siguiente forma:
+
+- ${v(f, "socio_1_nombre")}: Aporta ${formatCurrency(String(aporte1))} (${numberToWords(aporte1)} bolivianos), equivalente a ${cuotas1} cuotas (${pct1}% del capital social).
+- ${v(f, "socio_2_nombre")}: Aporta ${formatCurrency(String(aporte2))} (${numberToWords(aporte2)} bolivianos), equivalente a ${cuotas2} cuotas (${pct2}% del capital social).
+
+Los aportes han sido realizados en dinero efectivo, quedando depositados en la cuenta bancaria de la sociedad.
+
+CLÁUSULA SÉPTIMA.- (DE LA DURACIÓN)
+
+La sociedad tendrá una duración de ${f.duracion_sociedad === "indefinida" ? "tiempo INDEFINIDO" : f.duracion_sociedad + " años"}, computables a partir de la fecha de inscripción en el Registro de Comercio (FUNDEMPRESA).
+
+CLÁUSULA OCTAVA.- (DE LA ADMINISTRACIÓN Y REPRESENTACIÓN LEGAL)
+
+La administración y representación legal de la sociedad estará a cargo de un Gerente General, quien será: ${v(f, "gerente")}.
+
+El Gerente General tendrá las siguientes facultades:
+a) Representar legalmente a la sociedad ante terceros, entidades públicas y privadas.
+b) Administrar los negocios sociales.
+c) Suscribir contratos, convenios y obligaciones en nombre de la sociedad.
+d) Abrir, manejar y cerrar cuentas bancarias.
+e) Otorgar poderes especiales.
+f) Contratar y despedir personal.
+g) Realizar todas las gestiones necesarias para el cumplimiento del objeto social.
+
+Las operaciones que comprometan el patrimonio social en un monto superior al 25% del capital social requerirán aprobación previa de la junta de socios.
+
+CLÁUSULA NOVENA.- (DE LAS JUNTAS DE SOCIOS)
+
+La junta de socios es el órgano supremo de la sociedad. Las decisiones se tomarán por mayoría de votos computados en proporción a las cuotas de capital de cada socio.
+
+Se requerirá unanimidad para:
+a) Modificación del contrato social.
+b) Cambio del objeto social.
+c) Aumento o reducción del capital social.
+d) Disolución anticipada de la sociedad.
+
+CLÁUSULA DÉCIMA.- (DE LA DISTRIBUCIÓN DE UTILIDADES Y PÉRDIDAS)
+
+Las utilidades netas de cada gestión se distribuirán entre los socios en proporción a sus cuotas de capital, previa deducción de la reserva legal del 5% (hasta alcanzar el 50% del capital social, conforme al Art. 170 del Código de Comercio).
+
+Las pérdidas se asumirán en la misma proporción.
+
+CLÁUSULA DÉCIMA PRIMERA.- (DE LA CESIÓN DE CUOTAS)
+
+La cesión de cuotas de capital requerirá el consentimiento de los demás socios. En caso de cesión, los demás socios tendrán derecho de preferencia en la adquisición.
+
+CLÁUSULA DÉCIMA SEGUNDA.- (DE LA DISOLUCIÓN Y LIQUIDACIÓN)
+
+La sociedad se disolverá por las causales previstas en el Art. 378 del Código de Comercio:
+a) Por acuerdo de los socios.
+b) Por vencimiento del plazo.
+c) Por cumplimiento o imposibilidad del objeto social.
+d) Por pérdida de más de la mitad del capital social.
+e) Por reducción del número de socios a uno solo (por más de 6 meses).
+f) Por las demás causales previstas por ley.
+
+La liquidación se realizará conforme a los Arts. 384-404 del Código de Comercio.
+${f.clausulas_adicionales ? `\nCLÁUSULA DÉCIMA TERCERA.- (CLÁUSULAS ADICIONALES)\n\n${f.clausulas_adicionales}` : ""}
+
+Usted, Señor Notario, se servirá agregar las demás formalidades de estilo y ley.
+
+Es cuanto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_constitucion)}.
+
+
+
+_______________________________          _______________________________
+PRIMER SOCIO                             SEGUNDO SOCIO
+${v(f, "socio_1_nombre")}                 ${v(f, "socio_2_nombre")}
+C.I. ${v(f, "socio_1_ci")}                C.I. ${v(f, "socio_2_ci")}`;
+}
+
+function generateObra(f: FieldValues): string {
+  const precio = parseFloat(f.precio_total || "0");
+  const anticipo = parseFloat(f.anticipo || "0");
+  const multa = parseFloat(f.multa_diaria || "0");
+  const formasPago: Record<string, string> = {
+    avance: "según el avance de obra verificado por el propietario o su representante",
+    mensual: "en pagos mensuales iguales durante el plazo de ejecución",
+    hitos: "por hitos o etapas de la obra, conforme al cronograma acordado",
+    final: "en un solo pago al finalizar y recibir la obra conforme",
+  };
+  const materialesTexto: Record<string, string> = {
+    contratista: "EL/LA CONTRATISTA se compromete a proveer todos los materiales necesarios, los cuales están incluidos en el precio total de la obra",
+    propietario: "EL/LA PROPIETARIO(A) proveerá todos los materiales necesarios para la ejecución de la obra. EL/LA CONTRATISTA es responsable únicamente de la mano de obra",
+    mixto: "Los materiales serán provistos de forma compartida entre ambas partes, según acuerdo detallado que se adjuntará como anexo al presente contrato",
+  };
+
+  return `CONTRATO DE OBRA / CONSTRUCCIÓN
+
+Conste por el presente documento privado, que podrá ser elevado a instrumento público a solo reconocimiento de firmas y rúbricas, el siguiente CONTRATO DE OBRA, suscrito al tenor de las siguientes cláusulas:
+
+CLÁUSULA PRIMERA.- (DE LAS PARTES)
+
+Por una parte, ${partyBlock(f, "propietario", "EL/LA PROPIETARIO(A) o COMITENTE")}.
+
+Por otra parte, ${partyBlock(f, "contratista", "EL/LA CONTRATISTA")}.
+
+CLÁUSULA SEGUNDA.- (DEL OBJETO)
+
+EL/LA CONTRATISTA se compromete a ejecutar la siguiente obra:
+
+${v(f, "descripcion_obra")}
+
+Ubicación de la obra: ${v(f, "ubicacion_obra")}, ciudad de ${v(f, "ciudad")}.
+
+CLÁUSULA TERCERA.- (DEL PRECIO)
+
+El precio total de la obra se fija en ${formatCurrency(String(precio))} (${numberToWords(precio)} bolivianos), monto que incluye ${f.materiales === "contratista" ? "materiales y " : ""}mano de obra${f.materiales === "contratista" ? "" : " (sin materiales)"}.
+
+CLÁUSULA CUARTA.- (DE LA FORMA DE PAGO)
+
+EL/LA PROPIETARIO(A) realizará los pagos de la siguiente manera:
+
+a) Anticipo: ${formatCurrency(String(anticipo))} (${numberToWords(anticipo)} bolivianos) al momento de la firma del presente contrato.
+b) Saldo: ${formatCurrency(String(precio - anticipo))} (${numberToWords(precio - anticipo)} bolivianos), que serán pagados ${formasPago[f.forma_pago] || "según acuerdo de las partes"}.
+
+CLÁUSULA QUINTA.- (DE LOS MATERIALES)
+
+${materialesTexto[f.materiales] || materialesTexto.contratista}.
+
+Los materiales utilizados deberán ser de buena calidad y cumplir con las especificaciones técnicas acordadas.
+
+CLÁUSULA SEXTA.- (DEL PLAZO DE EJECUCIÓN)
+
+La obra deberá iniciarse el ${formatDate(f.fecha_inicio)} y concluirse en un plazo máximo de ${v(f, "plazo_dias")} días calendario.
+
+Las ampliaciones de plazo solo procederán por caso fortuito, fuerza mayor o por modificaciones solicitadas por EL/LA PROPIETARIO(A), debiendo documentarse por escrito.
+
+CLÁUSULA SÉPTIMA.- (DE LAS PENALIDADES POR RETRASO)
+
+${multa > 0
+    ? `En caso de retraso imputable a EL/LA CONTRATISTA, se aplicará una multa de ${formatCurrency(String(multa))} (${numberToWords(multa)} bolivianos) por cada día calendario de retraso, la cual podrá ser deducida del saldo pendiente de pago. La multa acumulada no podrá exceder el 10% del precio total de la obra.`
+    : "En caso de retraso imputable a EL/LA CONTRATISTA, las partes acordarán las penalidades correspondientes."
+}
+
+CLÁUSULA OCTAVA.- (DE LAS OBLIGACIONES DEL CONTRATISTA)
+
+EL/LA CONTRATISTA se obliga a:
+a) Ejecutar la obra conforme a las especificaciones técnicas, planos y normas de construcción aplicables.
+b) Emplear personal calificado y cumplir con las normas de seguridad laboral.
+c) Cumplir con los plazos establecidos.
+d) Obtener los permisos municipales de construcción necesarios.
+e) Mantener el orden y limpieza del área de trabajo.
+f) Afiliar a su personal al sistema de seguridad social.
+g) Responder por la calidad de los materiales y la mano de obra.
+
+CLÁUSULA NOVENA.- (DE LA RECEPCIÓN DE LA OBRA)
+
+Al finalizar la obra, se realizará una recepción provisional donde EL/LA PROPIETARIO(A) verificará el cumplimiento de las especificaciones. EL/LA CONTRATISTA tendrá un plazo de quince (15) días para subsanar las observaciones que se formulen.
+
+La recepción definitiva se realizará treinta (30) días después de la recepción provisional, previo pago del saldo pendiente.
+
+CLÁUSULA DÉCIMA.- (DE LA RESPONSABILIDAD POR DEFECTOS)
+
+Conforme al Art. 745 del Código Civil, EL/LA CONTRATISTA y el director de la obra (si lo hubiere) son responsables solidariamente por la ruina total o parcial de la construcción por defectos de la misma, durante un plazo de DIEZ (10) AÑOS contados desde la fecha de conclusión de la obra.
+
+EL/LA CONTRATISTA otorga además una garantía de UN (1) AÑO por defectos ocultos y acabados.
+
+CLÁUSULA DÉCIMA PRIMERA.- (DE LA RESOLUCIÓN)
+
+El presente contrato podrá ser resuelto por:
+a) Mutuo acuerdo de las partes.
+b) Incumplimiento grave de las obligaciones contractuales.
+c) Abandono de la obra por más de quince (15) días consecutivos.
+d) Caso fortuito o fuerza mayor que imposibilite la continuación de la obra.
+
+CLÁUSULA DÉCIMA SEGUNDA.- (DE LA JURISDICCIÓN)
+
+Las partes se someten a la jurisdicción de los juzgados ordinarios de la ciudad de ${v(f, "ciudad")}.
+${f.clausulas_adicionales ? `\nCLÁUSULA DÉCIMA TERCERA.- (CLÁUSULAS ADICIONALES)\n\n${f.clausulas_adicionales}` : ""}
+
+En señal de conformidad, ambas partes firman el presente contrato en dos ejemplares de un mismo tenor y efecto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_inicio)}.
+
+
+
+_______________________________          _______________________________
+EL/LA PROPIETARIO(A)                     EL/LA CONTRATISTA
+${v(f, "propietario_nombre")}             ${v(f, "contratista_nombre")}
+C.I. ${v(f, "propietario_ci")}            C.I. ${v(f, "contratista_ci")}`;
+}
+
+function generatePoder(f: FieldValues): string {
+  const tipoPoder: Record<string, string> = {
+    general: "PODER GENERAL DE ADMINISTRACIÓN",
+    especial: "PODER ESPECIAL",
+    especial_irrevocable: "PODER ESPECIAL E IRREVOCABLE",
+  };
+  const duracionTexto: Record<string, string> = {
+    indefinido: "El presente poder tendrá vigencia indefinida, hasta su revocación expresa por parte del PODERDANTE",
+    acto: "El presente poder tendrá vigencia hasta la conclusión del acto específico para el cual fue otorgado",
+    "1": "El presente poder tendrá una vigencia de un (1) año",
+    "2": "El presente poder tendrá una vigencia de dos (2) años",
+    "5": "El presente poder tendrá una vigencia de cinco (5) años",
+  };
+
+  return `${tipoPoder[f.tipo_poder] || "PODER NOTARIAL"}
+
+Señor Notario de Fe Pública:
+
+En el registro de escrituras públicas a su cargo, sírvase insertar el presente ${tipoPoder[f.tipo_poder] || "PODER NOTARIAL"}, con las siguientes cláusulas:
+
+NOTA: Los poderes notariales DEBEN ser otorgados mediante escritura pública ante Notario de Fe Pública para su validez legal (Art. 811 del Código Civil).
+
+CLÁUSULA PRIMERA.- (DEL PODERDANTE)
+
+${v(f, "poderdante_nombre")}, de nacionalidad ${v(f, "poderdante_nacionalidad")}, de estado civil ${v(f, "poderdante_estado_civil")}, de profesión ${v(f, "poderdante_profesion")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "poderdante_ci")}, con domicilio en ${v(f, "poderdante_domicilio")}, quien en adelante se denominará "EL/LA PODERDANTE".
+
+CLÁUSULA SEGUNDA.- (DEL APODERADO)
+
+${v(f, "apoderado_nombre")}, de nacionalidad ${v(f, "apoderado_nacionalidad")}, de estado civil ${v(f, "apoderado_estado_civil")}, de profesión ${v(f, "apoderado_profesion")}, mayor de edad, hábil por derecho, con Cédula de Identidad No. ${v(f, "apoderado_ci")}, con domicilio en ${v(f, "apoderado_domicilio")}, quien en adelante se denominará "EL/LA APODERADO(A)".
+
+CLÁUSULA TERCERA.- (DEL OTORGAMIENTO)
+
+EL/LA PODERDANTE, de libre y espontánea voluntad, otorga ${tipoPoder[f.tipo_poder] || "PODER"} amplio y suficiente a favor de EL/LA APODERADO(A), para que en su nombre y representación realice los siguientes actos:
+
+CLÁUSULA CUARTA.- (DE LAS FACULTADES)
+
+Se confieren las siguientes facultades:
+
+${v(f, "facultades")}
+${f.acto_especifico ? `\nActo específico: ${f.acto_especifico}` : ""}
+
+${f.tipo_poder === "general" ? `Adicionalmente, EL/LA APODERADO(A) queda facultado(a) para realizar todos los actos de administración ordinaria que sean necesarios en interés del PODERDANTE, incluyendo pero no limitándose a:
+a) Representar al PODERDANTE ante entidades públicas y privadas.
+b) Suscribir documentos, solicitudes y declaraciones.
+c) Realizar trámites administrativos, bancarios y judiciales.
+d) Cobrar y recibir sumas de dinero, otorgando los recibos correspondientes.
+e) Intervenir en procedimientos administrativos y judiciales.` : ""}
+
+CLÁUSULA QUINTA.- (DE LA REVOCABILIDAD)
+
+${f.revocable === "no"
+    ? "El presente poder es IRREVOCABLE, conforme al Art. 831 del Código Civil, por haber sido otorgado en interés del APODERADO(A) o de un tercero. Solo podrá ser revocado por causa justificada reconocida judicialmente."
+    : "El presente poder es REVOCABLE, pudiendo EL/LA PODERDANTE dejarlo sin efecto en cualquier momento mediante comunicación escrita al APODERADO(A) y protocolización de la revocación ante Notario de Fe Pública."
+}
+
+CLÁUSULA SEXTA.- (DE LA SUSTITUCIÓN)
+
+${f.sustitucion === "si"
+    ? "EL/LA APODERADO(A) queda facultado(a) para sustituir el presente poder a favor de otra persona, bajo su responsabilidad."
+    : "El presente poder es INTRANSFERIBLE. EL/LA APODERADO(A) NO podrá sustituir ni delegar las facultades conferidas a terceras personas."
+}
+
+CLÁUSULA SÉPTIMA.- (DEL PLAZO)
+
+${duracionTexto[f.duracion] || "El presente poder tendrá vigencia hasta su revocación"}, contados desde la fecha de su otorgamiento el ${formatDate(f.fecha_poder)}.
+
+CLÁUSULA OCTAVA.- (DE LAS OBLIGACIONES DEL APODERADO)
+
+EL/LA APODERADO(A) se obliga a:
+a) Actuar dentro de los límites de las facultades conferidas.
+b) Desempeñar el mandato con la diligencia de un buen administrador.
+c) Rendir cuentas de su gestión al PODERDANTE.
+d) No utilizar las facultades en beneficio propio o de terceros, salvo autorización expresa.
+
+CLÁUSULA NOVENA.- (DE LA EXTINCIÓN)
+
+El presente poder se extinguirá por:
+a) Revocación por parte del PODERDANTE (si es revocable).
+b) Renuncia del APODERADO(A).
+c) Muerte o incapacidad de cualquiera de las partes.
+d) Cumplimiento del acto específico (si es poder especial).
+e) Vencimiento del plazo (si se estableció uno).
+f) Las demás causales previstas en los Arts. 827-840 del Código Civil.
+
+Usted, Señor Notario, se servirá agregar las demás formalidades de estilo y ley.
+
+Es cuanto, en la ciudad de ${v(f, "ciudad")}, a los ${formatDate(f.fecha_poder)}.
+
+
+
+_______________________________          _______________________________
+EL/LA PODERDANTE                         EL/LA APODERADO(A)
+${v(f, "poderdante_nombre")}              ${v(f, "apoderado_nombre")}
+C.I. ${v(f, "poderdante_ci")}             C.I. ${v(f, "apoderado_ci")}`;
 }
