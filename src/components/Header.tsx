@@ -34,6 +34,12 @@ export default function Header() {
               Contratos
             </Link>
             <Link
+              href="/diccionario"
+              className="text-sm font-medium hover:text-[var(--color-accent)] transition-colors"
+            >
+              Diccionario
+            </Link>
+            <Link
               href="/#precios"
               className="text-sm font-medium hover:text-[var(--color-accent)] transition-colors"
             >
@@ -92,6 +98,13 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
             >
               Contratos
+            </Link>
+            <Link
+              href="/diccionario"
+              className="text-sm font-medium hover:text-[var(--color-accent)] transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              Diccionario
             </Link>
             <Link
               href="/#precios"
